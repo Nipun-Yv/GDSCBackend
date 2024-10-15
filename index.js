@@ -59,7 +59,7 @@ io.on("connection",(socket)=>{
     })
 })
 app.get("/health",async (req,res)=>{
-    res.send("OK")
+    res.status(200).send('OK');
 })
 app.get("/",async (req,res)=>{
     if(req.headers.authorization){
