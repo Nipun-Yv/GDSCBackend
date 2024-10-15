@@ -23,6 +23,7 @@ const port=4000;
 const app=express();
 const app1=express();
 const server=http1.createServer(app1);
+const authenticationBaseURL=process.env.A0URL
 const io=new Server(server,{
     cors:{
         origin:'http://localhost:3000',
@@ -59,7 +60,7 @@ io.on("connection",(socket)=>{
 })
 app.get("/",async (req,res)=>{
     const access_token=req.headers.authorization.split(' ')[1];
-    const response=await axios.get("https://dev-2jarn8jnr20lwuql.us.auth0.com/userinfo",{headers:{
+    const response=await axios.get(authenticationBaseURL,{headers:{
         authorization:`Bearer ${access_token}`
     }});
     const userinfo=response.data;
@@ -82,7 +83,7 @@ app.get("/",async (req,res)=>{
 })
 app.post("/update",async (req,res)=>{
     const access_token=req.headers.authorization.split(" ")[1];
-    const response=await axios.get("https://dev-2jarn8jnr20lwuql.us.auth0.com/userinfo",{headers:{
+    const response=await axios.get(authenticationBaseURL,{headers:{
         authorization:`Bearer ${access_token}`
     }})
     const userinfo=response.data;
@@ -126,9 +127,3 @@ app.post("/profile",async (req,res)=>{
     }
 })
 app.get("/")
-// const jwtCheck = auth({
-//     audience: 'nexusidentifier',
-//     issuerBaseURL: 'https://dev-2jarn8jnr20lwuql.us.auth0.com/',
-//     tokenSigningAlg: 'RS256'
-//   });
-// app.use(jwtCheck);
