@@ -3,8 +3,6 @@ import cors from "cors"
 import {auth} from "express-oauth2-jwt-bearer"
 import axios from "axios"
 import pg from "pg"
-import {Server} from "socket.io"
-import http1 from "http"
 import dotenv from "dotenv"
 dotenv.config()
 const host = process.env.PGHOST;
@@ -21,42 +19,17 @@ const db=new pg.Client({
 })
 const port=4000;
 const app=express();
-const app1=express();
-const server=http1.createServer(app1);
 const authenticationBaseURL=process.env.A0URL
-const io=new Server(server,{
-    cors:{
-        origin:'http://localhost:3000',
-        methods:["GET","POST"]
-    }
-})
+app.use(cors());
 try{
 db.connect();}
 catch(err){
     console.log(err.message)
 }
-
-app.use(cors())
 app.use(express.json())
 
-server.listen(3001,()=>{
-    console.log("Receiving requests from another port");
-})
 app.listen(port,()=>{
     console.log(`Server running successfully and recieving requests from port: ${port}`)
-})
-let connectedUsers={}
-io.on("connection",(socket)=>{
-    console.log("Heyo")
-    connectedUsers[socket.id]=0;
-    socket.on("send_private_message",(data)=>{
-        if(connectedUsers[socket.id]===0){
-           for(let i=0;i<1000;i++){
-               setTimeout(()=>{io.to(socket.id).emit("receive_message",{obj1:Math.floor(Math.random()*8000+1000),obj2:Math.floor(Math.random()*8000+1000),obj3:Math.floor(Math.random()*8000+1000)}
-               )},1100*i);
-               connectedUsers[socket.id]=1;
-          }}
-    })
 })
 app.get("/health",async (req,res)=>{
     res.status(200).send('OK');
