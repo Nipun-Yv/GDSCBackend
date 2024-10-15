@@ -58,7 +58,11 @@ io.on("connection",(socket)=>{
           }}
     })
 })
+app.get("/health",async (req,res)=>{
+    res.send("OK")
+})
 app.get("/",async (req,res)=>{
+    if(req.headers.authorization){
     const access_token=req.headers.authorization.split(' ')[1];
     const response=await axios.get(authenticationBaseURL,{headers:{
         authorization:`Bearer ${access_token}`
@@ -79,9 +83,13 @@ app.get("/",async (req,res)=>{
     catch(err){
         console.log(err.message);
         res.send({"leetcode":100,"codeforces":250,"hackerearth":50,"hackerrank":400,"codechef":80});
+    }}
+    else{
+        res.send("Error,invalid access")
     }
 })
 app.post("/update",async (req,res)=>{
+    if(req.headers.authorization){
     const access_token=req.headers.authorization.split(" ")[1];
     const response=await axios.get(authenticationBaseURL,{headers:{
         authorization:`Bearer ${access_token}`
@@ -95,6 +103,9 @@ app.post("/update",async (req,res)=>{
     catch(err){
         console.log(err.message)
         res.send("Not ok")
+    }}
+    else{
+        res.send("Error,invalid access")
     }
 })
 app.get("/profile/:email",async (req,res)=>{
@@ -126,4 +137,3 @@ app.post("/profile",async (req,res)=>{
 
     }
 })
-app.get("/")
